@@ -1,31 +1,91 @@
-import React from "react";
+import React, { useState } from "react";
 import { BsFillMenuButtonWideFill } from "react-icons/bs";
 import { IoHome, IoSettingsSharp } from "react-icons/io5";
 import { MdMessage, MdGroups2, MdAccountCircle } from "react-icons/md";
 import { FaUserFriends, FaSignOutAlt, FaUserTie } from "react-icons/fa";
-import { Link } from "react-router";
 import { PiUserListFill } from "react-icons/pi";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router";
 import { useEffect } from "react";
+import { Button } from "@material-tailwind/react";
+import { getAuth, signOut } from "firebase/auth";
+import { userLoginInfo } from "../slices/userSlices";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 const Sidebar = () => {
+  const auth = getAuth();
+  // useSelector use for get data from redux
   const userdata = useSelector((state) => state.userInfo.value);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [logoutPopup, setLogoutPopup] = useState(false);
   useEffect(() => {
     if (!userdata) {
       navigate("/login");
     }
   });
+  const handleLogout = () => {
+    setLogoutPopup(!logoutPopup);
+  };
+  const logout = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("signout");
+        localStorage.removeItem("userInfo");
+        dispatch(userLoginInfo(""));
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Bounce}
+      />
+      {logoutPopup && (
+        <div className="p-6 mt-3 bg-gray-300 rounded-xl absolute left-2/4 translate-x-[-50%] z-50">
+          <Button
+            onClick={logout}
+            className={`bg-green-500 text-[17px] font-bold`}
+          >
+            Yes
+          </Button>
+          <Button
+            onClick={() => setLogoutPopup(false)}
+            className={`bg-red-500 text-[17px] font-bold ml-3`}
+          >
+            No
+          </Button>
+        </div>
+      )}
       <div className="lg:hidden 2xl:hidden xl:hidden md:hidden sm:flex xxs:flex flex-col items-center w-16 h-screen overflow-hidden text-gray-700 bg-gray-100 rounded pt-3">
         <BsFillMenuButtonWideFill className="hidden" />
-        <img
-          src={userdata.photoURL}
-          alt="avatar"
-          className="relative inline-block h-[58px] w-[58px] !rounded-full object-cover object-center"
-        />
+        {userdata ? (
+          <img
+            src={userdata.photoURL}
+            alt="avatar"
+            className="relative inline-block h-[58px] w-[58px] !rounded-full object-cover object-center"
+          />
+        ) : (
+          <img
+            src="https://docs.material-tailwind.com/img/face-2.jpg"
+            alt="avatar"
+            className="relative inline-block h-[58px] w-[58px] !rounded-full object-cover object-center"
+          />
+        )}
+
         {userdata && (
           <h1 className="text-center mt-3 font-semibold">
             {userdata.displayName}
@@ -93,10 +153,11 @@ const Sidebar = () => {
 
       <div className="hidden md:flex sm:hidden xxs:hidden lg:flex 2xl:flex xl:flex flex-col items-center w-40 h-screen overflow-hidden text-gray-700 bg-gray-100 pt-3 border-r-[2px] border-green-500">
         <img
-          src={userdata.photoURL}
+          src={userdata?.photoURL}
           alt="avatar"
           className="relative inline-block h-[58px] w-[58px] !rounded-full object-cover object-center"
         />
+
         {userdata && (
           <h1 className="text-center mt-3 font-semibold">
             {userdata.displayName}
@@ -157,6 +218,7 @@ const Sidebar = () => {
               <span className="ml-2 text-base font-medium">Settings</span>
             </Link>
             <Link
+              onClick={handleLogout}
               className="relative flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
               href="#"
             >

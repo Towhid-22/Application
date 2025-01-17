@@ -5,6 +5,7 @@ import { IoEye, IoEyeOff } from "react-icons/io5";
 import { Link, useNavigate } from "react-router";
 import { MdError } from "react-icons/md";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -16,8 +17,7 @@ import { useDispatch } from "react-redux";
 import { userLoginInfo } from "../slices/userSlices";
 
 const Login = () => {
-  // const data = localStorage.getItem("userInfo");
-  // console.log(JSON.parse(data));
+  // useDispatch use for send data in redux
   const dispatch = useDispatch();
   // all states
   const auth = getAuth();
@@ -68,10 +68,16 @@ const Login = () => {
             theme: "dark",
             transition: Bounce,
           });
-          setEmail("");
-          setPassword("");
+           
           const user = userCredential.user;
           console.log(user);
+          set(ref(db, "users/" + user.uid), {
+            name: user.displayName,
+            email: user.email,
+            image: user.photoURL,
+          });
+          setEmail("");
+          setPassword("");
           dispatch(userLoginInfo(user));
           localStorage.setItem("userInfo", JSON.stringify(user));
           setTimeout(() => {
@@ -81,6 +87,7 @@ const Login = () => {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          console.log(errorMessage);
           if (errorCode.includes("auth/invalid-credential")) {
             toast.error("Input invalid credential", {
               position: "top-center",
@@ -132,7 +139,9 @@ const Login = () => {
         });
         setEmail("");
         setPassword("");
+        // send data in redux
         dispatch(userLoginInfo(user));
+        // send data in localstorage
         localStorage.setItem("userInfo", JSON.stringify(user));
         setTimeout(() => {
           navigate("/");
@@ -142,6 +151,7 @@ const Login = () => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
+        console.log(errorMessage)
         toast.error(errorCode, {
           position: "top-center",
           autoClose: 5000,
