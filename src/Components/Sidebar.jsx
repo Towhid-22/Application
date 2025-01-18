@@ -23,7 +23,7 @@ const Sidebar = () => {
     if (!userdata) {
       navigate("/login");
     }
-  });
+  },[]);
   const handleLogout = () => {
     setLogoutPopup(!logoutPopup);
   };
@@ -166,6 +166,7 @@ const Sidebar = () => {
         <div className="w-full px-2">
           <div className="flex flex-col items-center w-full mt-3 border-t border-gray-300">
             <Link
+              to={"/"}
               className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
               href="#"
             >
@@ -173,6 +174,7 @@ const Sidebar = () => {
               <span className="ml-2 text-base font-medium">Home</span>
             </Link>
             <Link
+              to={"/messege"}
               className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
               href="#"
             >
@@ -180,6 +182,7 @@ const Sidebar = () => {
               <span className="ml-2 text-base font-medium">Messege</span>
             </Link>
             <Link
+              to={"/friends"}
               className="flex items-center w-full h-12 px-3 mt-2 hover:bg-gray-300 rounded"
               href="#"
             >
@@ -187,6 +190,7 @@ const Sidebar = () => {
               <span className="ml-2 text-base font-medium">Friends</span>
             </Link>
             <Link
+              to={"/groups"}
               className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
               href="#"
             >
@@ -194,6 +198,7 @@ const Sidebar = () => {
               <span className="ml-2 text-base font-medium">Groups</span>
             </Link>
             <Link
+              to={"/userlist"}
               className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
               href="#"
             >

@@ -5,7 +5,7 @@ const Group = () => {
   return (
     <div>
       <div className="relative flex w-96 flex-col rounded-lg border border-slate-200 bg-white shadow-sm">
-        <h1 className="ml-6 mt-4 font-bold pb-3">Messege</h1>
+        <h1 className="ml-6 mt-4 font-bold pb-3">Groups</h1>
         <nav className="flex min-w-[240px] h-[400px] overflow-y-scroll flex-col gap-1 p-1.5">
           <div
             role="button"
