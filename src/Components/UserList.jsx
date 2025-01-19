@@ -1,30 +1,76 @@
 import React, { useEffect, useState } from "react";
 import { Button, IconButton } from "@material-tailwind/react";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import { useSelector } from "react-redux";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 const UserList = () => {
   const userdata = useSelector((state) => state.userInfo.value);
   const db = getDatabase();
   const [userList, setUserList] = useState([]);
+  const [friendrequestList, setFriendrequestList] = useState([]);
   useEffect(() => {
     const userListRef = ref(db, "users/");
     onValue(userListRef, (snapshot) => {
       let array = [];
       snapshot.forEach((item) => {
         if (userdata.uid != item.key) {
-          array.push(item.val());
+          // take id
+          array.push({ ...item.val(), id: item.key });
         }
       });
       setUserList(array);
     });
   }, []);
-  const handleFriendRequest = () => {
-    console.log("click");
+  useEffect(() => {
+    const userListRef = ref(db, "friendRequest/");
+    onValue(userListRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach((item) => {
+        array.push(item.val().senderId + item.val().receiverId);
+      });
+      setFriendrequestList(array);
+    });
+  }, []);
+
+  const handleFriendRequest = (item) => {
+    set(push(ref(db, "friendRequest/")), {
+      senderId: userdata.uid,
+      senderName: userdata.displayName,
+      senderEmail: userdata.email,
+      receiverId: item.id,
+      receiverName: item.name,
+      receiverEmail: item.email,
+    }).then(() => {
+      toast.success("Friend Request Sent", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+    });
   };
-  console.log(userList);
+
   return (
     <div>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Bounce}
+      />
       <div className="relative flex w-96 flex-col rounded-lg border border-slate-200 bg-white shadow-sm">
         <h1 className="ml-6 mt-4 font-bold pb-3">User List</h1>
         <nav className="flex min-w-[240px] h-[400px] overflow-y-scroll flex-col gap-1 p-1.5">
@@ -48,7 +94,16 @@ const UserList = () => {
                   </div>
                 </div>
                 <div className="ml-auto">
-                  <IconButton onClick={handleFriendRequest}>Add</IconButton>
+                  {friendrequestList.includes(userdata.uid + item.id) ||
+                  (friendrequestList.includes(item.id + userdata.uid) ? (
+                    <IconButton>
+                      R
+                    </IconButton>
+                  ) : (
+                    <IconButton onClick={() => handleFriendRequest(item)}>
+                      Add
+                    </IconButton>
+                  ))}
                 </div>
               </div>
             </div>

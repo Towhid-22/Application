@@ -5,10 +5,11 @@ import Messege from "../Components/Messege";
 import Group from "../Components/Group";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import FriendRequest from "../Components/FriendRequest";
 
 const Home = () => {
   const userdata = useSelector((state) => state.userInfo.value);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
     if (!userdata) {
       navigate("/login");
@@ -21,6 +22,7 @@ const Home = () => {
         <UserList />
         <Messege />
         <Group />
+        <FriendRequest />
       </div>
     </div>
   );

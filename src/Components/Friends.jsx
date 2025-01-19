@@ -6,19 +6,23 @@ import { useSelector } from "react-redux";
 
 const Friends = () => {
   const userdata = useSelector((state) => state.userInfo.value);
-  console.log(userdata);
   const db = getDatabase();
   const [friendList, setFriendList] = useState([]);
-  const starCountRef = ref(db, "users/");
   useEffect(() => {
-    onValue(starCountRef, (snapshot) => {
+    const friendListRef = ref(db, "users/");
+    onValue(friendListRef, (snapshot) => {
       const array = [];
       snapshot.forEach((item) => {
-        array.push(item.val());
+        if (userdata.uid != item.key) {
+          array.push(item.val());
+        }
       });
       setFriendList(array);
     });
   }, []);
+
+
+
   return (
     <div>
       <div className="relative flex w-96 flex-col rounded-lg border border-slate-200 bg-white shadow-sm  ">
@@ -43,7 +47,9 @@ const Friends = () => {
                     <p className="text-slate-500 text-sm">{item.email}</p>
                   </div>
                 </div>
-                <IconButton className="ml-1">Add</IconButton>
+                <IconButton className="ml-1">
+                  Add
+                </IconButton>
               </div>
             </div>
           ))}
