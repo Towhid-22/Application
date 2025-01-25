@@ -6,6 +6,9 @@ import Group from "../Components/Group";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import FriendRequest from "../Components/FriendRequest";
+import PracticeOne from "../Components/PracticeOne";
+import PracticeTwo from "../Components/PracticeTwo";
+import PracticeThree from "../Components/PracticeThree";
 
 const Home = () => {
   const userdata = useSelector((state) => state.userInfo.value);
@@ -23,6 +26,9 @@ const Home = () => {
         <Messege />
         <Group />
         <FriendRequest />
+        <PracticeOne />
+        <PracticeTwo />
+        <PracticeThree />
       </div>
     </div>
   );

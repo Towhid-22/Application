@@ -95,15 +95,13 @@ const UserList = () => {
                 </div>
                 <div className="ml-auto">
                   {friendrequestList.includes(userdata.uid + item.id) ||
-                  (friendrequestList.includes(item.id + userdata.uid) ? (
-                    <IconButton>
-                      R
-                    </IconButton>
-                  ) : (
-                    <IconButton onClick={() => handleFriendRequest(item)}>
-                      Add
-                    </IconButton>
-                  ))}
+                    (friendrequestList.includes(item.id + userdata.uid) ? (
+                      <IconButton>R</IconButton>
+                    ) : (
+                      <IconButton onClick={() => handleFriendRequest(item)}>
+                        Add
+                      </IconButton>
+                    ))}
                 </div>
               </div>
             </div>

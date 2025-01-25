@@ -9,6 +9,9 @@ import Messege from "./Components/Messege";
 import Friends from "./Components/Friends";
 import Group from "./Components/Group";
 import UserList from "./Components/UserList";
+import PracticeOne from "./Components/PracticeOne";
+import PracticeTwo from "./Components/PracticeTwo";
+import PracticeThree from "./Components/PracticeThree";
 
 const App = () => {
   return (
@@ -21,6 +24,9 @@ const App = () => {
           <Route path="/friends" element={<Friends />} />
           <Route path="/groups" element={<Group />} />
           <Route path="/userlist" element={<UserList />} />
+          <Route path="/practiceone" element={<PracticeOne />} />
+          <Route path="/practicetwo" element={<PracticeTwo />} />
+          <Route path="/practicethree" element={<PracticeThree />} />
         </Route>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />

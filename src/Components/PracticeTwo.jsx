@@ -2,35 +2,28 @@ import React, { useEffect, useState } from "react";
 import { Button, IconButton } from "@material-tailwind/react";
 import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import { useSelector } from "react-redux";
-
-const FriendRequest = () => {
+const PracticeTwo = () => {
+  const data = useSelector((state) => state.userInfo.value);
   const db = getDatabase();
-  const userdata = useSelector((state) => state.userInfo.value);
-  const [friendRequest, setFriendRequest] = useState([]);
+  const [accept, setAccept] = useState([]);
   useEffect(() => {
-    const friendListRef = ref(db, "friendRequest/");
-    onValue(friendListRef, (snapshot) => {
+    const starCountRef = ref(db, "request/");
+    onValue(starCountRef, (snapshot) => {
       const array = [];
-      snapshot.forEach((item) => {
-        if (userdata.uid == item.val().receiverId) {
-          array.push({ ...item.val(), id: item.key });
+      snapshot.forEach((practice) => {
+        if (data.uid == practice.val().receiverId) {
+          array.push(practice.val());
         }
       });
-      setFriendRequest(array);
+      setAccept(array);
     });
   }, []);
-
-  const handleAcceptFriend = (item) => {
-    set(push(ref(db, "friendList/")), {
-      ...item,
-    });
-  };
   return (
     <div>
       <div className="relative flex w-96 flex-col rounded-lg border border-slate-200 bg-white shadow-sm  ">
-        <h1 className="ml-6 mt-4 font-bold pb-3">Friends Request</h1>
+        <h1 className="ml-6 mt-4 font-bold pb-3">Friend Request List</h1>
         <nav className="flex min-w-[260px] h-[400px] overflow-y-scroll flex-col gap-1 p-1.5">
-          {friendRequest.map((item) => (
+          {accept.map((item) => (
             <div
               role="button"
               className="text-slate-800 flex w-full items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
@@ -51,12 +44,7 @@ const FriendRequest = () => {
                     <p className="text-slate-500 text-sm">{item.senderEmail}</p>
                   </div>
                 </div>
-                <IconButton
-                  onClick={() => handleAcceptFriend(item)}
-                  className="ml-1 !max-w-20 w-20"
-                >
-                  Accept
-                </IconButton>
+                <IconButton className="ml-1 !max-w-20 w-20">Add</IconButton>
               </div>
             </div>
           ))}
@@ -66,4 +54,4 @@ const FriendRequest = () => {
   );
 };
 
-export default FriendRequest;
+export default PracticeTwo;
