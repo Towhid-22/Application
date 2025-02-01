@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import { Button, IconButton, useSelect } from "@material-tailwind/react";
-import { getDatabase, ref, onValue, set } from "firebase/database";
+import { Button, IconButton } from "@material-tailwind/react";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  set,
+  push,
+  remove,
+} from "firebase/database";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
@@ -13,11 +20,43 @@ const Friends = () => {
     onValue(starCountRef, (snapshot) => {
       const array = [];
       snapshot.forEach((friend) => {
-        array.push({ ...friend.val(), id: friend.key });
+        if (
+          userdata.uid == friend.val().senderId ||
+          userdata.uid == friend.val().receiverId
+        ) {
+          array.push({ ...friend.val(), id: friend.key });
+        }
       });
       setFriendList(array);
     });
   }, []);
+
+  const handleBlock = (friends) => {
+    if (userdata.uid == friends.senderId) {
+      set(push(ref(db, "blockList/")), {
+        blockGiverId: friends.senderId,
+        blockGiverName: friends.senderName,
+        blockGiverEmail: friends.senderEmail,
+        blockReceiverId: friends.receiverId,
+        blockReceiverName: friends.receiverName,
+        blockReceiverEmail: friends.receiverEmail,
+      }).then(() => {
+        remove(ref(db, "friendList/" + item.id));
+      });
+    } else {
+      set(push(ref(db, "blockList/")), {
+        blockGiverId: friends.receiverId,
+        blockGiverName: friends.receiverName,
+        blockGiverEmail: friends.receiverEmail,
+        blockReceiverId: friends.senderId,
+        blockReceiverName: friends.senderName,
+        blockReceiverEmail: friends.senderEmail,
+      }).then(() => {
+        remove(ref(db, "friendList/" + friends.id));
+      });
+    }
+  };
+
   return (
     <div>
       <div className="relative flex w-96 flex-col rounded-lg border border-slate-200 bg-white shadow-sm  ">
@@ -38,13 +77,32 @@ const Friends = () => {
                     />
                   </div>
                   <div>
-                    <h6 className="text-slate-800 font-medium">{friends.senderName}</h6>
-                    <p className="text-slate-500 text-sm">
-                      {friends.senderEmail}
-                    </p>
+                    {userdata.uid == friends.senderId ? (
+                      <h6 className="text-slate-800 font-medium">
+                        {friends.receiverName}
+                      </h6>
+                    ) : (
+                      <h6 className="text-slate-800 font-medium">
+                        {friends.senderName}
+                      </h6>
+                    )}
+                    {userdata.uid == friends.senderId ? (
+                      <p className="text-slate-500 text-sm">
+                        {friends.receiverEmail}
+                      </p>
+                    ) : (
+                      <p className="text-slate-500 text-sm">
+                        {friends.senderEmail}
+                      </p>
+                    )}
                   </div>
                 </div>
-                <IconButton className="ml-1">Add</IconButton>
+                <IconButton
+                  onClick={() => handleBlock(friends)}
+                  className="ml-1"
+                >
+                  Block
+                </IconButton>
               </div>
             </div>
           ))}

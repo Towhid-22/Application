@@ -9,6 +9,8 @@ const UserList = () => {
   const db = getDatabase();
   const [userList, setUserList] = useState([]);
   const [friendrequestList, setFriendrequestList] = useState([]);
+  const [friendList, setFriendList] = useState([]);
+  const [listBlock, setListBlock] = useState([]);
   useEffect(() => {
     const userListRef = ref(db, "users/");
     onValue(userListRef, (snapshot) => {
@@ -30,6 +32,26 @@ const UserList = () => {
         array.push(item.val().senderId + item.val().receiverId);
       });
       setFriendrequestList(array);
+    });
+  }, []);
+  useEffect(() => {
+    const userListRef = ref(db, "friendList/");
+    onValue(userListRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach((item) => {
+        array.push(item.val().senderId + item.val().receiverId);
+      });
+      setFriendList(array);
+    });
+  }, []);
+  useEffect(() => {
+    const userListRef = ref(db, "friendList/");
+    onValue(userListRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach((item) => {
+        array.push(item.val().senderId + item.val().receiverId);
+      });
+      setListBlock(array);
     });
   }, []);
 
@@ -94,14 +116,22 @@ const UserList = () => {
                   </div>
                 </div>
                 <div className="ml-auto">
-                  {friendrequestList.includes(userdata.uid + item.id) ||
+                  {listBlock.includes(userdata.uid + item.id) ||
+                  listBlock.includes(item.id + userdata.uid) ? (
+                    <IconButton>B</IconButton>
+                  ) : friendList.includes(userdata.uid + item.id) ||
+                    friendList.includes(item.id + userdata.uid) ? (
+                    <IconButton>F</IconButton>
+                  ) : (
+                    friendrequestList.includes(userdata.uid + item.id) ||
                     (friendrequestList.includes(item.id + userdata.uid) ? (
                       <IconButton>R</IconButton>
                     ) : (
                       <IconButton onClick={() => handleFriendRequest(item)}>
                         Add
                       </IconButton>
-                    ))}
+                    ))
+                  )}
                 </div>
               </div>
             </div>
