@@ -10,6 +10,8 @@ import Friends from "./Components/Friends";
 import Group from "./Components/Group";
 import UserList from "./Components/UserList";
 import BlockList from "./Components/BlockList";
+import Search from "./Components/Search";
+import MyGroupList from "./Components/MyGroupList";
 
 const App = () => {
   return (
@@ -23,6 +25,8 @@ const App = () => {
           <Route path="/groups" element={<Group />} />
           <Route path="/userlist" element={<UserList />} />
           <Route path="/blocklist" element={<BlockList />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/mygrouplist" element={<MyGroupList />} />
         </Route>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />

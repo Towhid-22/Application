@@ -5,7 +5,7 @@ import { MdMessage, MdGroups2, MdAccountCircle } from "react-icons/md";
 import { FaUserFriends, FaSignOutAlt, FaUserTie } from "react-icons/fa";
 import { PiUserListFill } from "react-icons/pi";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router";
+import { useNavigate, Link, useLocation } from "react-router";
 import { useEffect } from "react";
 import { Button } from "@material-tailwind/react";
 import { getAuth, signOut } from "firebase/auth";
@@ -13,6 +13,7 @@ import { userLoginInfo } from "../slices/userSlices";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 
 const Sidebar = () => {
+  const location = useLocation();
   const auth = getAuth();
   // useSelector use for get data from redux
   const userdata = useSelector((state) => state.userInfo.value);
@@ -23,7 +24,7 @@ const Sidebar = () => {
     if (!userdata) {
       navigate("/login");
     }
-  },[]);
+  }, []);
   const handleLogout = () => {
     setLogoutPopup(!logoutPopup);
   };
@@ -167,7 +168,9 @@ const Sidebar = () => {
           <div className="flex flex-col items-center w-full mt-3 border-t border-gray-300">
             <Link
               to={"/"}
-              className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
+              className={`${
+                location.pathname == "/" && "bg-black text-white"
+              } flex items-center w-full h-12 px-3 mt-2 rounded`}
               href="#"
             >
               <IoHome className="w-6 h-6 mr-1" />
@@ -175,15 +178,19 @@ const Sidebar = () => {
             </Link>
             <Link
               to={"/messege"}
-              className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
+              className={`${
+                location.pathname == "/messege" && "bg-black text-white"
+              } flex items-center w-full h-12 px-3 mt-2 rounded`}
               href="#"
             >
               <MdMessage className="w-6 h-6 mr-1" />
-              <span className="ml-2 text-base font-medium">Messege</span>
+              <span className="ml-2 text-base font-medium">Messeges</span>
             </Link>
             <Link
               to={"/friends"}
-              className="flex items-center w-full h-12 px-3 mt-2 hover:bg-gray-300 rounded"
+              className={`${
+                location.pathname == "/friends" && "bg-black text-white"
+              } flex items-center w-full h-12 px-3 mt-2 rounded`}
               href="#"
             >
               <FaUserFriends className="w-6 h-6 mr-1" />
@@ -191,7 +198,9 @@ const Sidebar = () => {
             </Link>
             <Link
               to={"/groups"}
-              className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
+              className={`${
+                location.pathname == "/groups" && "bg-black text-white"
+              } flex items-center w-full h-12 px-3 mt-2 rounded`}
               href="#"
             >
               <MdGroups2 className="w-6 h-6 mr-1" />
@@ -199,14 +208,18 @@ const Sidebar = () => {
             </Link>
             <Link
               to={"/userlist"}
-              className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
+              className={`${
+                location.pathname == "/userlist" && "bg-black text-white"
+              } flex items-center w-full h-12 px-3 mt-2 rounded`}
               href="#"
             >
               <PiUserListFill className="w-6 h-6 mr-1" />
               <span className="ml-2 text-base font-medium">Users</span>
             </Link>
             <Link
-              className="flex items-center w-full h-12 px-3 mt-2 rounded hover:bg-gray-300"
+              className={`${
+                location.pathname == "/profile" && "bg-black text-white"
+              } flex items-center w-full h-12 px-3 mt-2 rounded`}
               href="#"
             >
               <FaUserTie className="w-6 h-6 mr-1" />

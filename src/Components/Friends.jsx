@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Button, IconButton } from "@material-tailwind/react";
+import { RiMessage3Line } from "react-icons/ri";
+import { ImBlocked } from "react-icons/im";
 import {
   getDatabase,
   ref,
@@ -9,9 +11,12 @@ import {
   remove,
 } from "firebase/database";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { msgInfo } from "../slices/msgSlice";
 
-const Friends = () => {
+const Friends = ({ className, msgBtn }) => {
+  // console.log(msgBtn);
+  const dispatch = useDispatch();
   const userdata = useSelector((state) => state.userInfo.value);
   const db = getDatabase();
   const [friendList, setFriendList] = useState([]);
@@ -41,7 +46,7 @@ const Friends = () => {
         blockReceiverName: friends.receiverName,
         blockReceiverEmail: friends.receiverEmail,
       }).then(() => {
-        remove(ref(db, "friendList/" + item.id));
+        remove(ref(db, "friendList/" + friends.id));
       });
     } else {
       set(push(ref(db, "blockList/")), {
@@ -57,55 +62,147 @@ const Friends = () => {
     }
   };
 
+  // search friend
+  const [searchFriendList, setSearchFriendList] = useState([]);
+  const handleSearch = (e) => {
+    const searchFriend = friendList.filter(
+      (search) =>
+        // search.name.toLowerCase().includes(e.target.value.toLowerCase())
+        search.receiverName
+          .toLowerCase()
+          .includes(e.target.value.toLowerCase()) ||
+        search.senderName.toLowerCase().includes(e.target.value.toLowerCase())
+    );
+    // console.log(searchFriend);
+    setSearchFriendList(searchFriend);
+  };
+
+  const handleMessageInfo = (item) => {
+    dispatch(msgInfo(item))
+  };
   return (
     <div>
-      <div className="relative flex w-96 flex-col rounded-lg border border-slate-200 bg-white shadow-sm  ">
+      <div
+        className={`${
+          className ? className : "shadow-sm rounded-lg border border-slate-200"
+        } relative flex w-96 flex-col  bg-white `}
+      >
         <h1 className="ml-6 mt-4 font-bold pb-3">Friend List</h1>
-        <nav className="flex min-w-[240px] h-[400px] overflow-y-scroll flex-col gap-1 p-1.5">
-          {friendList.map((friends) => (
-            <div
-              role="button"
-              className="text-slate-800 flex w-full items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex">
-                  <div className="mr-4 grid place-items-center">
-                    <img
-                      alt="candice"
-                      src="https://docs.material-tailwind.com/img/face-1.jpg"
-                      className="relative inline-block h-12 w-12 !rounded-full  object-cover object-center"
-                    />
+        <div className="px-4">
+          <input
+            onChange={handleSearch}
+            type="text"
+            className="w-full h-10 p-3 font-Ubuntu placeholder:text-gray-500 bg-gray-200 rounded"
+            placeholder="Search Friends"
+          />
+        </div>
+        <nav
+          className={`${
+            className ? className : "h-[400px]  overflow-y-scroll"
+          } flex min-w-[240px] flex-col gap-1 p-1.5`}
+        >
+          {searchFriendList.length > 0
+            ? searchFriendList.map((friends) => (
+                <div
+                  role="button"
+                  className="text-slate-800 flex w-full items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex">
+                      <div className="mr-4 grid place-items-center">
+                        <img
+                          alt="candice"
+                          src="https://docs.material-tailwind.com/img/face-1.jpg"
+                          className="relative inline-block h-12 w-12 !rounded-full  object-cover object-center"
+                        />
+                      </div>
+                      <div>
+                        {userdata.uid == friends.senderId ? (
+                          <h6 className="text-slate-800 font-medium">
+                            {friends.receiverName}
+                          </h6>
+                        ) : (
+                          <h6 className="text-slate-800 font-medium">
+                            {friends.senderName}
+                          </h6>
+                        )}
+                        {userdata.uid == friends.senderId ? (
+                          <p className="text-slate-500 text-sm">
+                            {friends.receiverEmail}
+                          </p>
+                        ) : (
+                          <p className="text-slate-500 text-sm">
+                            {friends.senderEmail}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <IconButton
+                      title="Block"
+                      onClick={() => handleBlock(friends)}
+                      className="ml-1 bg-red-500"
+                    >
+                      <ImBlocked className="w-5 h-5" />
+                    </IconButton>
                   </div>
-                  <div>
-                    {userdata.uid == friends.senderId ? (
-                      <h6 className="text-slate-800 font-medium">
-                        {friends.receiverName}
-                      </h6>
+                </div>
+              ))
+            : friendList.map((friends) => (
+                <div
+                  role="button"
+                  className="text-slate-800 flex w-full items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex">
+                      <div className="mr-4 grid place-items-center">
+                        <img
+                          alt="candice"
+                          src="https://docs.material-tailwind.com/img/face-1.jpg"
+                          className="relative inline-block h-12 w-12 !rounded-full  object-cover object-center"
+                        />
+                      </div>
+                      <div>
+                        {userdata.uid == friends.senderId ? (
+                          <h6 className="text-slate-800 font-medium">
+                            {friends.receiverName}
+                          </h6>
+                        ) : (
+                          <h6 className="text-slate-800 font-medium">
+                            {friends.senderName}
+                          </h6>
+                        )}
+                        {userdata.uid == friends.senderId ? (
+                          <p className="text-slate-500 text-sm">
+                            {friends.receiverEmail}
+                          </p>
+                        ) : (
+                          <p className="text-slate-500 text-sm">
+                            {friends.senderEmail}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {msgBtn ? (
+                      <IconButton
+                        onClick={() => handleMessageInfo(friends)}
+                        title="Message"
+                        className="ml-1 bg-green-500"
+                      >
+                        <RiMessage3Line className="w-5 h-5" />
+                      </IconButton>
                     ) : (
-                      <h6 className="text-slate-800 font-medium">
-                        {friends.senderName}
-                      </h6>
-                    )}
-                    {userdata.uid == friends.senderId ? (
-                      <p className="text-slate-500 text-sm">
-                        {friends.receiverEmail}
-                      </p>
-                    ) : (
-                      <p className="text-slate-500 text-sm">
-                        {friends.senderEmail}
-                      </p>
+                      <IconButton
+                        title="Block"
+                        onClick={() => handleBlock(friends)}
+                        className="ml-1 bg-red-500"
+                      >
+                        <ImBlocked className="w-5 h-5" />
+                      </IconButton>
                     )}
                   </div>
                 </div>
-                <IconButton
-                  onClick={() => handleBlock(friends)}
-                  className="ml-1"
-                >
-                  Block
-                </IconButton>
-              </div>
-            </div>
-          ))}
+              ))}
         </nav>
       </div>
     </div>

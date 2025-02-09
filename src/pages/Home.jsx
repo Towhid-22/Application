@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import FriendRequest from "../Components/FriendRequest";
 import BlockList from "../Components/BlockList";
+import Search from "../Components/Search";
+import MyGroupList from "../Components/MyGroupList";
 
 const Home = () => {
   const userdata = useSelector((state) => state.userInfo.value);
@@ -21,11 +23,12 @@ const Home = () => {
       <div className=" lg:gap-0 lg:gap-y-3 gap-4 mt-4 overflow-y-scroll h-[98vh] grid lg:grid-cols-3 xl:grid-cols-4 w-full">
         <Friends />
         <UserList />
-        <Messege />
+        {/* <Messege /> */}
         <Group />
         <FriendRequest />
         <BlockList />
-
+        <Search />
+        <MyGroupList />
       </div>
     </div>
   );
