@@ -78,7 +78,11 @@ const Friends = ({ className, msgBtn }) => {
   };
 
   const handleMessageInfo = (item) => {
-    dispatch(msgInfo(item))
+    if (userdata.uid == item.senderId) {
+      dispatch(msgInfo({ name: item.receiverName, id: item.receiverId }));
+    }else{
+      dispatch(msgInfo({ name: item.senderName, id: item.senderId }));
+    }
   };
   return (
     <div>

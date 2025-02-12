@@ -12,6 +12,8 @@ import { GoDotFill, GoDownload } from "react-icons/go";
 import Friends from "./Friends";
 
 const Messege = () => {
+  const msgInfo = useSelector((state) => state.msgInfo.value);
+  console.log(msgInfo);
   return (
     <div className="space-y-6 my-6 flex">
       <div className="grid lg:grid-cols-3 gap-4">
@@ -35,7 +37,7 @@ const Messege = () => {
                     />
                     <div>
                       <h5 className="text-base font-medium text-default-700">
-                        John Kish
+                        {msgInfo ? msgInfo.name : <h1>Select an user</h1>}
                       </h5>
                       <p className="mt-1.5 text-default-400 text-xs flex items-center">
                         <GoDotFill className="ti ti-circle-filled text-red-400 me-1" />{" "}

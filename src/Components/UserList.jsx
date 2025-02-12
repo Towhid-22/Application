@@ -65,7 +65,6 @@ const UserList = () => {
     });
   }, []);
 
-  console.log(userdata);
   // Send Friend Request
   const handleFriendRequest = (item) => {
     console.log(item);
