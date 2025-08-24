@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { Button, IconButton } from "@material-tailwind/react";
 import { useEffect } from "react";
-import { getDatabase, ref, onValue } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  push,
+  remove,
+  onValue,
+} from "firebase/database";
 import { useSelector } from "react-redux";
 import { LuPaperclip, LuSend, LuUsers } from "react-icons/lu";
 import Profile from "../../src/assets/profile.png";
@@ -12,8 +19,55 @@ import { GoDotFill, GoDownload } from "react-icons/go";
 import Friends from "./Friends";
 
 const Messege = () => {
+  const db = getDatabase();
+  const [msg, setMsg] = useState("");
+  const [msgList, setMsgList] = useState([]);
+  const data = useSelector((state) => state.userInfo.value);
   const msgInfo = useSelector((state) => state.msgInfo.value);
-  console.log(msgInfo);
+  // console.log(msgInfo);
+
+  const handleMsg = (e) => {
+    setMsg(e.target.value);
+  };
+  const handleSendMsg = () => {
+    if (msg) {
+      set(push(ref(db, "msglist/")), {
+        msgSenderId: data.uid,
+        msgSenderName: data.displayName,
+        msgReceiverId: msgInfo.id,
+        msgReceiverName: msgInfo.name,
+        msg: msg,
+        date: `${new Date().getFullYear()} - ${
+          new Date().getMonth() + 1
+        } - ${new Date().getDate()} - ${
+          new Date().getHours() + 1
+        } - ${new Date().getMinutes()}`,
+      }).then(() => {
+        setMsg("");
+      });
+    } else {
+      alert("Please Enter Message");
+    }
+    // console.log(msg);
+  };
+  useEffect(() => {
+    const msgListRef = ref(db, "msglist/");
+    onValue(msgListRef, (snapshot) => {
+      const array = [];
+      snapshot.forEach((item) => {
+        if (
+          (data.uid == item.val().msgSenderId &&
+            msgInfo.id == item.val().msgReceiverId) ||
+          (data.uid == item.val().msgReceiverId &&
+            msgInfo.id == item.val().msgSenderId)
+        ) {
+          array.push({ ...item.val(), id: item.key });
+        }
+      });
+      setMsgList(array);
+    });
+  }, []);
+  console.log(msgList);
   return (
     <div className="space-y-6 my-6 flex">
       <div className="grid lg:grid-cols-3 gap-4">
@@ -95,25 +149,30 @@ const Messege = () => {
               </div>
             </div>
             <div className="bg-white border-t border-default-200 dark:bg-default-50 p-6">
-              <form name="chat-form" className="flex items-center gap-2">
+              <div name="chat-form" className="flex items-center gap-2">
                 <input
+                  onChange={handleMsg}
                   type="text"
-                  className="form-input w-full border-none bg-default-100 text-default-900 rounded placeholder:text-default-600 focus:ring-primary "
+                  value={msg}
+                  className="w-full border-none bg-default-100 text-default-900 rounded placeholder:text-default-600 p-2"
                   placeholder="Enter your text"
                   required=""
                 />
                 <div className="w-auto flex gap-1">
-                  <a
+                  {/* <a
                     href="#"
                     className="px-3 py-2 rounded bg-default-200 text-default-800 hover:bg-default-800/20"
                   >
                     <LuPaperclip />
-                  </a>
-                  <button className="px-3 py-2 inline-flex items-center justify-center gap-2 bg-teal-500 text-white rounded transition-all duration-300 hover:bg-teal-600">
+                  </a> */}
+                  <button
+                    onClick={handleSendMsg}
+                    className="px-3 py-2 inline-flex items-center justify-center gap-2 bg-teal-500 text-white rounded transition-all duration-300 hover:bg-teal-600"
+                  >
                     Send <LuSend />
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
