@@ -49,12 +49,12 @@ const FriendRequest = () => {
     setSearchFriendRequestList(searchFriendRequest);
   };
 
-  const handleCancelRequest =(item)=>{
-    console.log(item)
-     if (userdata.uid == item.receiverId) {
-       remove(ref(db, "friendRequest/" + item.id));
-     }
-  }
+  const handleCancelRequest = (item) => {
+    console.log(item);
+    if (userdata.uid == item.receiverId) {
+      remove(ref(db, "friendRequest/" + item.id));
+    }
+  };
   return (
     <div>
       <div className="relative flex w-96 flex-col rounded-lg border border-slate-200 bg-white shadow-sm  ">
@@ -140,9 +140,10 @@ const FriendRequest = () => {
                     >
                       <FaCheck className="w-5 h-5" />
                     </IconButton>
-                    <IconButton 
-                    onClick={()=> handleCancelRequest(item)}
-                    className="ml-1 !max-w-20 w-20 bg-red-500">
+                    <IconButton
+                      onClick={() => handleCancelRequest(item)}
+                      className="ml-1 !max-w-20 w-20 bg-red-500"
+                    >
                       <RiCloseLine className="w-8 h-8 font-extrabold" />
                     </IconButton>
                   </div>
